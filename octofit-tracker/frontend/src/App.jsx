@@ -1,4 +1,4 @@
-import { NavLink, Route, Routes } from 'react-router-dom'
+import { NavLink, Route, Routes, Navigate } from 'react-router-dom'
 import './App.css'
 import Activities from './components/Activities.jsx'
 import Leaderboard from './components/Leaderboard.jsx'
@@ -6,13 +6,14 @@ import Teams from './components/Teams.jsx'
 import Users from './components/Users.jsx'
 import Workouts from './components/Workouts.jsx'
 
-const codespaceName = import.meta.env.VITE_CODESPACE_NAME
+const codespaceName = (import.meta.env.VITE_CODESPACE_NAME || '').trim()
 const apiHost = codespaceName
   ? `https://${codespaceName}-8000.app.github.dev`
   : 'http://localhost:8000'
+const apiBase = `${apiHost}/api`
 const apiNote = codespaceName
-  ? `Using Codespaces host: ${apiHost}`
-  : 'VITE_CODESPACE_NAME is not set, falling back to http://localhost:8000'
+  ? `Using Codespaces API host: ${apiBase}`
+  : `VITE_CODESPACE_NAME is not set. Falling back to ${apiBase}. Define VITE_CODESPACE_NAME in .env.local for GitHub Codespaces.`
 
 function App() {
   return (
@@ -25,19 +26,19 @@ function App() {
         </p>
         <p className="small text-secondary">{apiNote}</p>
         <nav className="nav nav-pills gap-2 flex-wrap">
-          <NavLink className="nav-link" to="/users">
+          <NavLink className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')} to="/users">
             Users
           </NavLink>
-          <NavLink className="nav-link" to="/teams">
+          <NavLink className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')} to="/teams">
             Teams
           </NavLink>
-          <NavLink className="nav-link" to="/activities">
+          <NavLink className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')} to="/activities">
             Activities
           </NavLink>
-          <NavLink className="nav-link" to="/leaderboard">
+          <NavLink className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')} to="/leaderboard">
             Leaderboard
           </NavLink>
-          <NavLink className="nav-link" to="/workouts">
+          <NavLink className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')} to="/workouts">
             Workouts
           </NavLink>
         </nav>
@@ -45,12 +46,13 @@ function App() {
 
       <main>
         <Routes>
-          <Route path="/users" element={<Users apiHost={apiHost} />} />
-          <Route path="/teams" element={<Teams apiHost={apiHost} />} />
-          <Route path="/activities" element={<Activities apiHost={apiHost} />} />
-          <Route path="/leaderboard" element={<Leaderboard apiHost={apiHost} />} />
-          <Route path="/workouts" element={<Workouts apiHost={apiHost} />} />
-          <Route path="*" element={<Users apiHost={apiHost} />} />
+          <Route path="/" element={<Navigate replace to="/users" />} />
+          <Route path="/users" element={<Users apiBase={apiBase} />} />
+          <Route path="/teams" element={<Teams apiBase={apiBase} />} />
+          <Route path="/activities" element={<Activities apiBase={apiBase} />} />
+          <Route path="/leaderboard" element={<Leaderboard apiBase={apiBase} />} />
+          <Route path="/workouts" element={<Workouts apiBase={apiBase} />} />
+          <Route path="*" element={<Navigate replace to="/users" />} />
         </Routes>
       </main>
     </div>

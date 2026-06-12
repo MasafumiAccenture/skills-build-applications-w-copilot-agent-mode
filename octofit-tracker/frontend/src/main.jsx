@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './index.css'
 import App from './App.jsx'
 
+// App.jsx uses import.meta.env.VITE_CODESPACE_NAME to resolve the API host safely.
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
