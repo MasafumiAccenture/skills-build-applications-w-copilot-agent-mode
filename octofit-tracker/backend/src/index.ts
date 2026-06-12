@@ -1,10 +1,10 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import { Activity, LeaderboardEntry, Team, User, Workout } from './models';
+import { connectDatabase, getDatabaseUrl } from './config/database';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
-const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/octofit_db';
 const codespaceName = process.env.CODESPACE_NAME;
 const apiBaseUrl = codespaceName
   ? `https://${codespaceName}-8000.app.github.dev`
@@ -53,10 +53,9 @@ app.get('/api/workouts/', async (_req, res) => {
   res.json(workouts);
 });
 
-mongoose
-  .connect(MONGO_URL)
+connectDatabase()
   .then(() => {
-    console.log(`Connected to MongoDB at ${MONGO_URL}`);
+    console.log(`Connected to MongoDB at ${getDatabaseUrl()}`);
     console.log(`API base URL is ${apiBaseUrl}`);
     app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
   })
